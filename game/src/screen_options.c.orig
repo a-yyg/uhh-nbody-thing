@@ -1,0 +1,156 @@
+/**********************************************************************************************
+*
+*   raylib - Advance Game template
+*
+*   Options Screen Functions Definitions (Init, Update, Draw, Unload)
+*
+*   Copyright (c) 2014-2022 Ramon Santamaria (@raysan5)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+
+#include "raylib.h"
+#include "screens.h"
+
+#include <stdio.h>
+
+// debug options
+#ifndef NDEBUG
+#include <signal.h>
+#endif
+
+//----------------------------------------------------------------------------------
+// Module Variables Definition (local)
+//----------------------------------------------------------------------------------
+static int framesCounter = 0;
+static int finishScreen = 0;
+
+typedef enum {
+  OPTION_FULLSCREEN = 0,
+  OPTION_MUSIC,
+  OPTION_SOUND,
+  OPTION_LANGUAGE,
+  OPTION_BACK,
+  OPTION_COUNT
+} Option;
+
+static const char *optionNames[OPTION_COUNT] = {
+  "Fullscreen",
+  "Music",
+  "Sound",
+  "Language",
+  "Back"
+};
+
+static const char curOptText[] = "Current Option: %s (%d)";
+static char curOptBuffer[64];
+
+static Option selectedOption;
+
+#define CLAMP(value, min, max) ((value < min) ? min : (value > max) ? max : value)
+
+//----------------------------------------------------------------------------------
+// Options Screen Functions Definition
+//----------------------------------------------------------------------------------
+
+// Options Screen Initialization logic
+void InitOptionsScreen(void)
+{
+  // TODO: Initialize OPTIONS screen variables here!
+  framesCounter = 0;
+  finishScreen = 0;
+
+  selectedOption = OPTION_FULLSCREEN;
+}
+
+// Options Screen Update logic
+void UpdateOptionsScreen(void)
+{
+  // TODO: Update OPTIONS screen variables here!
+  if (IsKeyPressed(KEY_UP)) {
+    selectedOption--;
+  }
+
+  if (IsKeyPressed(KEY_DOWN)) {
+    selectedOption++;
+  }
+
+  selectedOption = (Option)CLAMP((int)selectedOption, 0, OPTION_COUNT - 1);
+
+#ifndef NDEBUG
+  if ((int)selectedOption < 0) {
+    raise(SIGTRAP);
+  }
+#endif
+
+  if (IsKeyPressed(KEY_ENTER)) {
+    switch (selectedOption) {
+    case OPTION_FULLSCREEN:
+      ToggleFullscreen();
+      break;
+    case OPTION_MUSIC:
+      // SetMusicVolume(GetMusicVolume() == 0 ? MAX_VOLUME : 0);
+      break;
+    case OPTION_SOUND:
+      // SetSoundVolume(GetSoundVolume() == 0 ? MAX_VOLUME : 0);
+      break;
+    case OPTION_LANGUAGE:
+      // SetLanguage(GetLanguage() == LANGUAGE_ENGLISH ? LANGUAGE_SPANISH :
+      // LANGUAGE_ENGLISH);
+      break;
+    case OPTION_BACK:
+      finishScreen = 1;
+      break;
+    }
+  }
+
+  framesCounter++;
+}
+
+// Options Screen Draw logic
+void DrawOptionsScreen(void)
+{
+  // TODO: Draw OPTIONS screen here!
+
+  // Draw background
+  DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+
+  // Draw options
+  for (int i = 0; i < OPTION_COUNT; i++) {
+    if (i == selectedOption) {
+      DrawText(optionNames[i], GetScreenWidth() / 2 - MeasureText(optionNames[i], 30) / 2, GetScreenHeight() / 2 - 100 + i * 50, 30, Fade(WHITE, 0.5f));
+    } else {
+      DrawText(optionNames[i], GetScreenWidth() / 2 - MeasureText(optionNames[i], 30) / 2, GetScreenHeight() / 2 - 100 + i * 50, 30, WHITE);
+    }
+  }
+
+  // Draw current option text
+  snprintf(curOptBuffer, 64, curOptText, "", selectedOption);
+  DrawText(curOptBuffer, GetScreenWidth() - MeasureText(curOptBuffer, 30) - 20, 20, 30, Fade(WHITE, 0.5f));
+}
+
+// Options Screen Unload logic
+void UnloadOptionsScreen(void)
+{
+  // TODO: Unload OPTIONS screen variables here!
+}
+
+// Options Screen should finish?
+int FinishOptionsScreen(void)
+{
+  return finishScreen;
+}

@@ -1,0 +1,60 @@
+#ifndef VECTOR3_H
+#define VECTOR3_H
+
+#include "raylib.h"
+
+Vector3 Vector3Add(Vector3 a, Vector3 b);
+Vector3 Vector3Sub(Vector3 a, Vector3 b);
+Vector3 Vector3Mul(Vector3 a, int b);
+Vector3 Vector3CrossProduct(Vector3 a, Vector3 b);
+Vector3 Vector3Normalize(Vector3 a);
+
+Vector3
+Vector3Add(Vector3 a, Vector3 b)
+{
+  return (Vector3)
+  {
+    a.x + b.x, a.y + b.y, a.z + b.z
+  };
+}
+
+Vector3
+Vector3Sub(Vector3 a, Vector3 b)
+{
+  return (Vector3)
+  {
+    a.x - b.x, a.y - b.y, a.z - b.z
+  };
+}
+
+Vector3
+Vector3Mul(Vector3 a, int b)
+{
+  return (Vector3)
+  {
+    a.x * b, a.y * b, a.z * b
+  };
+}
+
+Vector3
+Vector3CrossProduct(Vector3 a, Vector3 b)
+{
+  return (Vector3)
+  {
+    a.y *b.z - a.z *b.y,
+        a.z *b.x - a.x *b.z,
+        a.x *b.y - a.y *b.x
+  };
+}
+
+Vector3
+Vector3Normalize(Vector3 a)
+{
+  float length = sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
+  return (Vector3)
+  {
+    a.x / length, a.y / length, a.z / length
+  };
+}
+
+#endif
